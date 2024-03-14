@@ -1,14 +1,14 @@
 const express = require("express");
-const public_users = express.Router();
+const router = express.Router();
 
 let books = require("../database/books.js");
 
-public_users.get("/", function (req, res) {
+router.get("/", function (req, res) {
   // return book list available in the shop
   return res.status(200).json(books);
 });
 
-public_users.get("/author", function (req, res) {
+router.get("/author", function (req, res) {
   // return all books based on author
   const author = req.query.author;
 
@@ -19,7 +19,7 @@ public_users.get("/author", function (req, res) {
   return res.status(200).json(filtered_books);
 });
 
-public_users.get("/title", function (req, res) {
+router.get("/title", function (req, res) {
   // return all books based on title
   const title = req.query.title;
 
@@ -30,7 +30,7 @@ public_users.get("/title", function (req, res) {
   return res.status(200).json(filtered_books);
 });
 
-public_users.get("/isbn", function (req, res) {
+router.get("/isbn", function (req, res) {
   // return book details based on ISBN
   let book_info = books[req.query.isbn];
 
@@ -42,7 +42,7 @@ public_users.get("/isbn", function (req, res) {
   return res.status(200).json(book_info);
 });
 
-public_users.get("/review", function (req, res) {
+router.get("/review", function (req, res) {
   // return book reviews based on ISBN
   let book_info = books[req.query.isbn];
 
@@ -54,7 +54,7 @@ public_users.get("/review", function (req, res) {
   return res.status(200).json({ reviews: book_info.reviews });
 });
 
-public_users.put("/review", (req, res) => {
+router.put("/review", (req, res) => {
   // add a book review given authenticated user
   // Hint: You have to give a review as a request query & it must get posted with the username (stored in the session) posted.
   // If the same user posts a different review on the same ISBN, it should modify the existing review.
@@ -65,4 +65,4 @@ public_users.put("/review", (req, res) => {
   return res.status(300).json({ message: "Yet to be implemented" });
 });
 
-module.exports.general = public_users;
+module.exports.books_router = router;

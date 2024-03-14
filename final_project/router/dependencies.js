@@ -20,4 +20,3 @@ const registerUser = (username, password) => {
 module.exports.authenticatedUser = authenticatedUser;
 module.exports.userExists = userExists;
 module.exports.registerUser = registerUser;
-module.exports.users = users;

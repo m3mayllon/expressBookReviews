@@ -1,8 +1,9 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const session = require("express-session");
-const customer_routes = require("./router/auth_users.js").authenticated;
-const genl_routes = require("./router/general.js").general;
+
+const auth_router = require("./router/auth.js").auth_router;
+const books_router = require("./router/books.js").books_router;
+const users_router = require("./router/users.js").users_router;
 
 const app = express();
 
@@ -17,13 +18,10 @@ app.use(
   })
 );
 
-app.use("/customer/auth/*", function auth(req, res, next) {
-  //Write the authenication mechanism here
-});
-
 const PORT = 5000;
 
-app.use("/customer", customer_routes);
-app.use("/", genl_routes);
+app.use("/customer", auth_router);
+app.use("/", books_router);
+app.use("/", users_router);
 
 app.listen(PORT, () => console.log("Server is running"));

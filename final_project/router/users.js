@@ -1,10 +1,10 @@
 const express = require("express");
-const public_users = express.Router();
+const router = express.Router();
 
 let userExists = require("./dependencies.js").userExists;
 let registerUser = require("./dependencies.js").registerUser;
 
-public_users.post("/register", (req, res) => {
+router.post("/register", (req, res) => {
   // register a new user given username and password
   const { username, password } = req.body;
 
@@ -29,3 +29,5 @@ public_users.post("/register", (req, res) => {
     message: `Username '${username}' has successfully been registered.`,
   });
 });
+
+module.exports.users_router = router;
