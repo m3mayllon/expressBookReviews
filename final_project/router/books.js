@@ -1,41 +1,8 @@
 const express = require("express");
-let books = require("./booksdb.js");
-let userExists = require("./auth_users.js").userExists;
-let registerUser = require("./auth_users.js").registerUser;
 const public_users = express.Router();
 
-/* USERS */
-/* USERS */
-/* USERS */
-public_users.post("/register", (req, res) => {
-  // register a new user given username and password
-  const { username, password } = req.body;
+let books = require("../database/books.js");
 
-  // check if username and password are provided
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ error: "Username and password are required." });
-  }
-
-  // check if username already exists
-  if (userExists(username)) {
-    return res
-      .status(409)
-      .json({ error: `Username '${username}' already exists.` });
-  }
-
-  // proceed with registration
-  registerUser(username, password);
-
-  res.status(200).json({
-    message: `Username '${username}' has successfully been registered.`,
-  });
-});
-
-/* BOOKS */
-/* BOOKS */
-/* BOOKS */
 public_users.get("/", function (req, res) {
   // return book list available in the shop
   return res.status(200).json(books);
@@ -85,6 +52,17 @@ public_users.get("/review", function (req, res) {
   }
 
   return res.status(200).json({ reviews: book_info.reviews });
+});
+
+public_users.put("/review", (req, res) => {
+  // add a book review given authenticated user
+  // Hint: You have to give a review as a request query & it must get posted with the username (stored in the session) posted.
+  // If the same user posts a different review on the same ISBN, it should modify the existing review.
+  // If another user logs in and posts a review on the same ISBN, it will get added as a different review under the same ISBN.
+
+  let book_info = books[req.query.isbn];
+
+  return res.status(300).json({ message: "Yet to be implemented" });
 });
 
 module.exports.general = public_users;
