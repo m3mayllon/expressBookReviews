@@ -2,14 +2,35 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
+let authenticatedUser = require("./dependencies.js").authenticatedUser;
+
 // app.use("/customer/auth/*", function auth(req, res, next) {
 //   //Write the authenication mechanism here
 // });
 
 router.post("/login", (req, res) => {
   // log in authenticated users
-  //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+  const { username, password } = req.body;
+
+  // check if username and password are provided
+  if (!username || !password) {
+    return res
+      .status(400)
+      .json({ error: "Username and password are required." });
+  }
+
+  // check if user is authenticated
+  if (!authenticatedUser(username, password)) {
+    return res
+      .status(201)
+      .json({ message: "Unauthorized. Please check username and password." });
+  }
+
+  // create JWT token
+  let accessToken = jwt.sign({ data: password }, "access", { expiresIn: 60 });
+  req.session.authorization = { accessToken, username };
+
+  return res.status(200).send("User successfully logged in.");
 });
 
 module.exports.auth_router = router;
