@@ -28,7 +28,9 @@ router.post("/login", (req, res) => {
   });
   req.session.authorization = { accessToken, username };
 
-  return res.status(200).send("User successfully logged in.");
+  return res
+    .status(200)
+    .json({ message: `'${username}' has successfully logged in.` });
 });
 
 module.exports.auth_router = router;
