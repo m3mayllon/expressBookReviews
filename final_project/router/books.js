@@ -34,6 +34,17 @@ router.get("/author", async function (req, res) {
   }
 });
 
+router.get("/isbn", async function (req, res) {
+  // return all books by ISBN
+  try {
+    const booksByISBN = await fetchBooksByFilter(filterByISBN, req.query.isbn);
+    return res.status(200).json(booksByISBN);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 router.get("/title", async function (req, res) {
   // return all books by title
   try {
@@ -42,17 +53,6 @@ router.get("/title", async function (req, res) {
       req.query.title
     );
     return res.status(200).json(booksByTitle);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-router.get("/isbn", async function (req, res) {
-  // return all books by ISBN
-  try {
-    const booksByISBN = await fetchBooksByFilter(filterByISBN, req.query.isbn);
-    return res.status(200).json(booksByISBN);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Internal Server Error" });
