@@ -7,6 +7,8 @@ const {
   filterByAuthor,
   filterByISBN,
   filterByTitle,
+  updateBookReviews,
+  deleteBookReviews,
 } = require("../crud/books.js");
 
 // return all books
@@ -74,7 +76,7 @@ router.get("/review", async function (req, res) {
 });
 
 // add a user book review given authentication
-router.put("/auth/review", (req, res) => {
+router.put("/auth/review", async function (req, res) {
   const username = req.session.authorization.username;
   const { isbn, review } = req.query;
 
@@ -83,29 +85,29 @@ router.put("/auth/review", (req, res) => {
     return res.status(400).json({ error: "ISBN and Review are required." });
   }
 
-  // check if user has already reviewed the book
-  if (books[isbn] && books[isbn].reviews && books[isbn].reviews[username]) {
-    // update existing review if user has already reviewed the book
-    books[isbn].reviews[username] = review;
-  } else {
-    // add new review if user has not reviewed the book yet
-    if (!books[isbn]) {
-      books[isbn] = { reviews: {} };
+  try {
+    // check if there are any books with the provided ISBN
+    const booksByISBN = await fetchBooksByFilter(filterByISBN, isbn);
+    if (booksByISBN.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No books found with the provided ISBN." });
     }
-    books[isbn].reviews[username] = review;
+
+    // update existing review or add new review
+    const updatedBooks = await updateBookReviews(booksByISBN, username, review);
+    return res.status(200).json({
+      message: `'${username}' review has successfully been added/updated.`,
+      reviews: updatedBooks[0].reviews,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-
-  // fetch book reviews
-  let book_info = books[isbn];
-
-  return res.status(200).json({
-    message: `'${username}' review has successfully been added/updated.`,
-    reviews: book_info.reviews,
-  });
 });
 
 // delete a user book review given authentication
-router.delete("/auth/review", (req, res) => {
+router.delete("/auth/review", async function (req, res) {
   const username = req.session.authorization.username;
   const isbn = req.query.isbn;
 
@@ -114,16 +116,25 @@ router.delete("/auth/review", (req, res) => {
     return res.status(400).json({ error: "ISBN is required." });
   }
 
-  // delete user review
-  delete books[isbn].reviews[username];
+  try {
+    // check if there are any books with the provided ISBN
+    const booksByISBN = await fetchBooksByFilter(filterByISBN, isbn);
+    if (booksByISBN.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No books found with the provided ISBN." });
+    }
 
-  // fetch book reviews
-  let book_info = books[isbn];
-
-  res.status(200).json({
-    message: `'${username}' review has successfully been deleted.`,
-    reviews: book_info.reviews,
-  });
+    // delete review
+    const updatedBooks = await deleteBookReviews(booksByISBN, username);
+    return res.status(200).json({
+      message: `'${username}' review has successfully been deleted.`,
+      reviews: updatedBooks[0].reviews,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 module.exports.books_router = router;
