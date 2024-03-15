@@ -23,7 +23,9 @@ router.post("/login", (req, res) => {
   }
 
   // create JWT token and store username in session
-  let accessToken = jwt.sign({ data: password }, "access", { expiresIn: 60 });
+  let accessToken = jwt.sign({ data: password }, "access", {
+    expiresIn: 60 * 60,
+  });
   req.session.authorization = { accessToken, username };
 
   return res.status(200).send("User successfully logged in.");
