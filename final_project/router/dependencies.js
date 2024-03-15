@@ -13,8 +13,7 @@ const userExists = (username) => {
 
 const registerUser = (username, password) => {
   // add user object (username and password) to the users array
-  const newUser = { username, password };
-  users.push(newUser);
+  users.push({ username, password });
 };
 
 module.exports.authenticatedUser = authenticatedUser;
