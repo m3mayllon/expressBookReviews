@@ -4,8 +4,8 @@ const router = express.Router();
 let userExists = require("./dependencies.js").userExists;
 let registerUser = require("./dependencies.js").registerUser;
 
+// register a new user given username and password
 router.post("/register", (req, res) => {
-  // register a new user given username and password
   const { username, password } = req.body;
 
   // check if username and password are provided

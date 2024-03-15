@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 
 let authenticatedUser = require("./dependencies.js").authenticatedUser;
 
+// log in authenticated users
 router.post("/login", (req, res) => {
-  // log in authenticated users
   const { username, password } = req.body;
 
   // check if username and password are provided

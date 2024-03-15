@@ -9,8 +9,8 @@ const {
   filterByTitle,
 } = require("../crud/books.js");
 
+// return all books
 router.get("/", async function (req, res) {
-  // return all books
   try {
     const books = await fetchBooks();
     return res.status(200).json(books);
@@ -20,8 +20,8 @@ router.get("/", async function (req, res) {
   }
 });
 
+// return all books by author
 router.get("/author", async function (req, res) {
-  // return all books by author
   try {
     const booksByAuthor = await fetchBooksByFilter(
       filterByAuthor,
@@ -34,8 +34,8 @@ router.get("/author", async function (req, res) {
   }
 });
 
+// return all books by ISBN
 router.get("/isbn", async function (req, res) {
-  // return all books by ISBN
   try {
     const booksByISBN = await fetchBooksByFilter(filterByISBN, req.query.isbn);
     return res.status(200).json(booksByISBN);
@@ -45,8 +45,8 @@ router.get("/isbn", async function (req, res) {
   }
 });
 
+// return all books by title
 router.get("/title", async function (req, res) {
-  // return all books by title
   try {
     const booksByTitle = await fetchBooksByFilter(
       filterByTitle,
@@ -59,8 +59,8 @@ router.get("/title", async function (req, res) {
   }
 });
 
+// return book reviews by ISBN
 router.get("/review", async function (req, res) {
-  // return book reviews by ISBN
   try {
     const booksByISBN = await fetchBooksByFilter(filterByISBN, req.query.isbn);
     if (booksByISBN.length === 0) {
@@ -73,9 +73,8 @@ router.get("/review", async function (req, res) {
   }
 });
 
+// add a user book review given authentication
 router.put("/auth/review", (req, res) => {
-  // add a user book review given authentication
-
   const username = "admin"; // TODO: get username from auth
   const { isbn, review } = req.query;
 
@@ -105,9 +104,8 @@ router.put("/auth/review", (req, res) => {
   });
 });
 
+// delete a user book review given authentication
 router.delete("/auth/review", (req, res) => {
-  // delete a user book review given authentication
-
   const username = "admin"; // TODO: get username from auth
   const isbn = req.query.isbn;
 
