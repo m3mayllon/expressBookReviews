@@ -54,15 +54,59 @@ router.get("/review", function (req, res) {
   return res.status(200).json({ reviews: book_info.reviews });
 });
 
-router.put("/review", (req, res) => {
-  // add a book review given authenticated user
-  // Hint: You have to give a review as a request query & it must get posted with the username (stored in the session) posted.
-  // If the same user posts a different review on the same ISBN, it should modify the existing review.
-  // If another user logs in and posts a review on the same ISBN, it will get added as a different review under the same ISBN.
+router.put("/auth/review", (req, res) => {
+  // add a user book review given authentication
 
-  let book_info = books[req.query.isbn];
+  const username = "admin"; // TODO: get username from auth
+  const { isbn, review } = req.query;
 
-  return res.status(300).json({ message: "Yet to be implemented" });
+  // check if ISBN and review are provided
+  if (!review || !isbn) {
+    return res.status(400).json({ error: "ISBN and Review are required." });
+  }
+
+  // check if user has already reviewed the book
+  if (books[isbn] && books[isbn].reviews && books[isbn].reviews[username]) {
+    // update existing review if user has already reviewed the book
+    books[isbn].reviews[username] = review;
+  } else {
+    // add new review if user has not reviewed the book yet
+    if (!books[isbn]) {
+      books[isbn] = { reviews: {} };
+    }
+    books[isbn].reviews[username] = review;
+  }
+
+  // fetch book reviews
+  let book_info = books[isbn];
+
+  return res.status(200).json({
+    message: `'${username}' review has successfully been added/updated.`,
+    reviews: book_info.reviews,
+  });
+});
+
+router.delete("/auth/review", (req, res) => {
+  // delete a user book review given authentication
+
+  const username = "admin"; // TODO: get username from auth
+  const isbn = req.query.isbn;
+
+  // check if ISBN is provided
+  if (!isbn) {
+    return res.status(400).json({ error: "ISBN is required." });
+  }
+
+  // delete user review
+  delete books[isbn].reviews[username];
+
+  // fetch book reviews
+  let book_info = books[isbn];
+
+  res.status(200).json({
+    message: `'${username}' review has successfully been deleted.`,
+    reviews: book_info.reviews,
+  });
 });
 
 module.exports.books_router = router;
