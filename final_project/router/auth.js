@@ -18,11 +18,11 @@ router.post("/login", (req, res) => {
   // check if user is authenticated
   if (!authenticatedUser(username, password)) {
     return res
-      .status(201)
+      .status(401)
       .json({ message: "Unauthorized. Please check username and password." });
   }
 
-  // create JWT token
+  // create JWT token and store username in session
   let accessToken = jwt.sign({ data: password }, "access", { expiresIn: 60 });
   req.session.authorization = { accessToken, username };
 
