@@ -59,16 +59,18 @@ router.get("/title", async function (req, res) {
   }
 });
 
-router.get("/review", function (req, res) {
-  // return book reviews based on ISBN
-  let book_info = books[req.query.isbn];
-
-  // check if book exists
-  if (!book_info) {
-    return res.status(200).json({});
+router.get("/review", async function (req, res) {
+  // return book reviews by ISBN
+  try {
+    const booksByISBN = await fetchBooksByFilter(filterByISBN, req.query.isbn);
+    if (booksByISBN.length === 0) {
+      return res.status(200).json(booksByISBN);
+    }
+    return res.status(200).json({ reviews: booksByISBN[0].reviews });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-
-  return res.status(200).json({ reviews: book_info.reviews });
 });
 
 router.put("/auth/review", (req, res) => {
