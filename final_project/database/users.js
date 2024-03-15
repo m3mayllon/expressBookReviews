@@ -1,3 +1,3 @@
-let users = [{ username: "admin", password: "admin" }];
+let users = [];
 
 module.exports = users;
