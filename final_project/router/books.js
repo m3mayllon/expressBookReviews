@@ -75,7 +75,7 @@ router.get("/review", async function (req, res) {
 
 // add a user book review given authentication
 router.put("/auth/review", (req, res) => {
-  const username = "admin"; // TODO: get username from auth
+  const username = req.session.authorization.username;
   const { isbn, review } = req.query;
 
   // check if ISBN and review are provided
@@ -106,7 +106,7 @@ router.put("/auth/review", (req, res) => {
 
 // delete a user book review given authentication
 router.delete("/auth/review", (req, res) => {
-  const username = "admin"; // TODO: get username from auth
+  const username = req.session.authorization.username;
   const isbn = req.query.isbn;
 
   // check if ISBN is provided
