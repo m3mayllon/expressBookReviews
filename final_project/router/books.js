@@ -1,45 +1,62 @@
 const express = require("express");
 const router = express.Router();
 
-let books = require("../database/books.js");
+const {
+  fetchBooks,
+  fetchBooksByFilter,
+  filterByAuthor,
+  filterByISBN,
+  filterByTitle,
+} = require("../crud/books.js");
 
-router.get("/", function (req, res) {
-  // return book list available in the shop
-  return res.status(200).json(books);
-});
-
-router.get("/author", function (req, res) {
-  // return all books based on author
-  const author = req.query.author;
-
-  // filter out books
-  let booksArray = Object.values(books);
-  let filtered_books = booksArray.filter((book) => book.author === author);
-
-  return res.status(200).json(filtered_books);
-});
-
-router.get("/title", function (req, res) {
-  // return all books based on title
-  const title = req.query.title;
-
-  // filter out books
-  let booksArray = Object.values(books);
-  let filtered_books = booksArray.filter((book) => book.title === title);
-
-  return res.status(200).json(filtered_books);
-});
-
-router.get("/isbn", function (req, res) {
-  // return book details based on ISBN
-  let book_info = books[req.query.isbn];
-
-  // check if book exists
-  if (!book_info) {
-    return res.status(200).json({});
+router.get("/", async function (req, res) {
+  // return all books
+  try {
+    const books = await fetchBooks();
+    return res.status(200).json(books);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
+});
 
-  return res.status(200).json(book_info);
+router.get("/author", async function (req, res) {
+  // return all books by author
+  try {
+    const booksByAuthor = await fetchBooksByFilter(
+      filterByAuthor,
+      req.query.author
+    );
+    return res.status(200).json(booksByAuthor);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.get("/title", async function (req, res) {
+  // return all books by title
+  try {
+    const booksByTitle = await fetchBooksByFilter(
+      filterByTitle,
+      req.query.title
+    );
+    return res.status(200).json(booksByTitle);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.get("/isbn", async function (req, res) {
+  // return all books by ISBN
+  try {
+    const booksByISBN = await fetchBooksByFilter(filterByISBN, req.query.isbn);
+    return res.status(200).json(booksByISBN);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 router.get("/review", function (req, res) {
