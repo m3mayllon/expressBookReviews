@@ -1,5 +1,6 @@
 const express = require("express");
 const session = require("express-session");
+const jwt = require("jsonwebtoken");
 
 const auth_router = require("./router/auth.js").auth_router;
 const books_router = require("./router/books.js").books_router;
